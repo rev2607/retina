@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetinaRisk — Cardiovascular Risk Prediction</title>
+    <meta name="description" content="AI-Powered Cardiovascular Risk Prediction from Retinal Fundus Images using EfficientNetB3 and Grad-CAM.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ═══════════════ PAGE 1: UPLOAD ═══════════════ -->
+    <section id="page-upload" class="page active">
+        <div class="container">
+            <!-- Step Bar -->
+            <div class="step-bar">
+                <div class="step active"><span class="step-num">1</span> Upload</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">2</span> Processing</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span> Results</div>
+            </div>
+
+            <!-- Header -->
+            <header class="main-header">
+                <h1>👁️ RetinaRisk</h1>
+                <p>AI-Powered Cardiovascular Risk Prediction from Retinal Fundus Images</p>
+            </header>
+
+            <div class="divider"></div>
+
+            <div class="upload-layout">
+                <!-- Left: Clinical Inputs -->
+                <aside class="clinical-panel">
+                    <h2>🩺 Clinical Data</h2>
+                    <p class="caption">Adjust parameters below. These apply to all uploaded images.</p>
+
+                    <div class="input-group">
+                        <label for="bp">Systolic Blood Pressure (mmHg)</label>
+                        <input type="range" id="bp" min="80" max="200" value="120" oninput="document.getElementById('bp-val').textContent=this.value">
+                        <span class="range-val" id="bp-val">120</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="cholesterol">Total Cholesterol (mg/dL)</label>
+                        <input type="range" id="cholesterol" min="100" max="400" value="200" step="5" oninput="document.getElementById('chol-val').textContent=this.value">
+                        <span class="range-val" id="chol-val">200</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="bmi">Body Mass Index (BMI)</label>
+                        <input type="range" id="bmi" min="15" max="45" value="25" step="0.5" oninput="document.getElementById('bmi-val').textContent=this.value">
+                        <span class="range-val" id="bmi-val">25</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="diabetes">Diabetes Status</label>
+                        <select id="diabetes">
+                            <option value="0">No Diabetes</option>
+                            <option value="1">Diabetic</option>
+                        </select>
+                    </div>
+
+                    <p class="hint">These values are combined with retinal analysis for a multi-modal prediction.</p>
+                </aside>
+
+                <!-- Right: Upload Area -->
+                <main class="upload-area">
+                    <h3>📤 Upload Retinal Fundus Image(s)</h3>
+
+                    <div class="dropzone" id="dropzone">
+                        <div class="dropzone-content">
+                            <span class="dropzone-icon">👁️⚕️</span>
+                            <p class="dropzone-title">Drag & drop images here</p>
+                            <p class="dropzone-sub">or click to browse</p>
+                            <p class="dropzone-formats">JPG, JPEG, PNG — Batch upload supported</p>
+                        </div>
+                        <input type="file" id="file-input" accept=".jpg,.jpeg,.png" multiple hidden>
+                    </div>
+
+                    <!-- Preview thumbnails -->
+                    <div class="preview-strip" id="preview-strip"></div>
+
+                    <p class="file-count" id="file-count"></p>
+
+                    <button class="btn-analyze" id="btn-analyze" disabled>
+                        🚀 Analyze All Images
+                    </button>
+                </main>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <strong>⚠️ Disclaimer:</strong> This tool is for research and educational purposes only.
+            It is not a substitute for professional medical diagnosis.<br>
+            Built with Flask • TensorFlow • EfficientNetB3 • Grad-CAM
+        </footer>
+    </section>
+
+
+    <!-- ═══════════════ PAGE 2: LOADING ═══════════════ -->
+    <section id="page-loading" class="page">
+        <div class="container loading-container">
+            <div class="step-bar">
+                <div class="step done"><span class="step-num">✓</span> Upload</div>
+                <div class="step-line done"></div>
+                <div class="step active"><span class="step-num">2</span> Processing</div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span> Results</div>
+            </div>
+
+            <div class="pulse-wrapper">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <div class="icon">👁️</div>
+            </div>
+
+            <h2 class="loading-title">Analyzing Retinal Images</h2>
+            <p class="loading-sub" id="loading-status">🔬 Preprocessing retinal images …</p>
+
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <p class="progress-label" id="progress-label">Starting analysis …</p>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════ PAGE 3: RESULTS ═══════════════ -->
+    <section id="page-results" class="page">
+        <div class="container">
+            <div class="step-bar">
+                <div class="step done"><span class="step-num">✓</span> Upload</div>
+                <div class="step-line done"></div>
+                <div class="step done"><span class="step-num">✓</span> Processing</div>
+                <div class="step-line done"></div>
+                <div class="step active"><span class="step-num">3</span> Results</div>
+            </div>
+
+            <header class="main-header">
+                <h1>👁️ RetinaRisk — Results</h1>
+                <p>Analysis Complete • Images Classified by Cardiovascular Risk</p>
+            </header>
+
+            <button class="btn-back" id="btn-back">← Back to Upload</button>
+
+            <div class="divider"></div>
+
+            <!-- Summary Metrics -->
+            <div class="metrics-row" id="metrics-row"></div>
+
+            <div class="divider"></div>
+
+            <!-- Errors -->
+            <div id="errors-section"></div>
+
+            <!-- High Risk Group -->
+            <div id="high-risk-section"></div>
+
+            <!-- Low Risk Group -->
+            <div id="low-risk-section"></div>
+
+            <!-- Clinical Summary -->
+            <details class="clinical-summary" id="clinical-summary">
+                <summary>📊 Clinical Input Used for Prediction(s)</summary>
+                <div class="clinical-grid" id="clinical-grid"></div>
+            </details>
+        </div>
+
+        <footer class="footer">
+            <strong>⚠️ Disclaimer:</strong> This tool is for research and educational purposes only.
+            It is not a substitute for professional medical diagnosis.<br>
+            Built with Flask • TensorFlow • EfficientNetB3 • Grad-CAM
+        </footer>
+    </section>
+
+
+    <!-- ═══════════════ HEATMAP MODAL ═══════════════ -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">✕</button>
+            <h3 class="modal-title" id="modal-title">🔥 Grad-CAM Heatmap</h3>
+            <div class="modal-images">
+                <div>
+                    <p class="modal-label">Original</p>
+                    <img id="modal-original" alt="Original retinal scan">
+                </div>
+                <div>
+                    <p class="modal-label">Grad-CAM Overlay</p>
+                    <img id="modal-gradcam" alt="Grad-CAM heatmap overlay">
+                </div>
+            </div>
+            <a class="btn-download" id="modal-download" download="gradcam.png">⬇️ Download Grad-CAM</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

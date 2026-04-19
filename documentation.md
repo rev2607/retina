@@ -105,7 +105,7 @@ Recent medical research has established a strong correlation between the conditi
 
 **RetinaRisk** is an AI-powered web application that leverages this retina-heart connection to predict cardiovascular risk from retinal fundus images. The system uses a deep learning model based on **EfficientNetB3**, a state-of-the-art convolutional neural network, combined with clinical patient data (blood pressure, cholesterol, BMI, and diabetes status) to produce a comprehensive risk assessment. The model was trained on the **APTOS 2019 Blindness Detection** dataset from Kaggle, which contains 3,662 high-resolution retinal fundus photographs.
 
-The application is built using **Streamlit**, a modern Python web framework, and provides a user-friendly interface where healthcare professionals can upload retinal images, input clinical parameters, and receive an instant risk score along with a **Grad-CAM** (Gradient-weighted Class Activation Mapping) heatmap that visually highlights the retinal regions contributing to the prediction. This explainability feature is essential for building trust in AI-assisted medical diagnostics.
+The application is built with a **Flask** backend API and a modern **HTML/CSS/JS** frontend. It provides a user-friendly interface where healthcare professionals can upload retinal images, input clinical parameters, and receive an instant risk score along with a **Grad-CAM** (Gradient-weighted Class Activation Mapping) heatmap that visually highlights the retinal regions contributing to the prediction. This explainability feature is essential for building trust in AI-assisted medical diagnostics.
 
 The project follows a multimodal approach, integrating both visual features extracted from retinal images and numerical clinical data to improve prediction accuracy. This dual-input architecture ensures that the system does not rely solely on image analysis but also incorporates established cardiovascular risk factors.
 
@@ -115,7 +115,7 @@ The following deliverables are produced as part of the RetinaRisk project:
 
 1. **Trained Deep Learning Model:** A multimodal EfficientNetB3-based model (`retina_heart_model.h5`, ~96 MB) trained to classify retinal fundus images into Normal and Diseased categories, with cardiovascular risk probability output.
 
-2. **Web Application:** A fully functional Streamlit-based web application (`app.py`) that provides:
+2. **Web Application:** A fully functional web application (Flask `server.py` and `static/index.html`) that provides:
    - Retinal fundus image upload (single and batch)
    - Clinical data input via interactive sidebar controls
    - Real-time risk prediction with percentage score
@@ -182,9 +182,9 @@ The Asia Pacific Tele-Ophthalmology Society (APTOS) organized a Kaggle competiti
 
 Huang et al. (2020) reviewed multimodal deep learning approaches in healthcare, demonstrating that combining multiple data modalities (images, clinical data, genomic data) significantly improves predictive performance compared to single-modality models. The RetinaRisk project implements this principle by fusing visual features from retinal images with clinical parameters (blood pressure, cholesterol, BMI, diabetes status) using a concatenation-based fusion strategy.
 
-**Streamlit for Medical AI Deployment:**
+**Web Technologies for Medical AI Deployment:**
 
-Streamlit has emerged as a popular framework for deploying machine learning models as interactive web applications. Its simplicity, rapid prototyping capability, and built-in support for file uploads, sliders, and dynamic visualizations make it ideal for medical AI demonstrations and clinical decision support tools. Several studies have used Streamlit to create accessible interfaces for AI-based diagnostic systems in ophthalmology, radiology, and pathology.
+Modern frameworks like Flask combined with pure HTML/CSS/JavaScript have emerged as standard architectures for deploying machine learning models as interactive web applications. This separation of concerns allows for lightweight API backends perfectly suited for inference, while custom frontends enable rich user experiences with file uploads, dynamic animations, and visual results. Several studies have used custom web stacks to create accessible interfaces for AI-based diagnostic systems in ophthalmology, radiology, and pathology.
 
 ---
 
@@ -231,7 +231,7 @@ The RetinaRisk system addresses these challenges by providing a non-invasive, AI
 
 5. **Grad-CAM Visualization:** The system generates a Grad-CAM heatmap overlay on the retinal image, highlighting the specific regions (blood vessel abnormalities, hemorrhages, lesions) that contributed to the prediction.
 
-6. **Web-Based Interface:** The entire system is deployed as a Streamlit web application accessible from any modern web browser, requiring no specialized software installation.
+6. **Web-Based Interface:** The entire system is deployed as a web application (Flask backend with HTML/JS frontend) accessible from any modern web browser, requiring no specialized software installation.
 
 ### 3.2.1 Advantages
 
@@ -290,7 +290,7 @@ The feasibility of the RetinaRisk project was evaluated across three dimensions:
 The project is technically feasible because:
 - EfficientNetB3 is a well-established, pre-trained deep learning architecture available through TensorFlow/Keras with extensive documentation and community support.
 - The APTOS 2019 dataset provides sufficient labeled retinal images (3,662) for training a binary classifier using transfer learning.
-- Streamlit provides a mature web framework capable of handling file uploads, interactive widgets, and dynamic visualizations with minimal boilerplate code.
+- Flask provides a mature, lightweight backend framework capable of handling file uploads and exposing APIs, while modern HTML/CSS/JS allows for interactive widgets and dynamic visualizations.
 - Grad-CAM is a proven explainability technique with established implementations for TensorFlow models.
 - All required libraries (TensorFlow, OpenCV, Streamlit, NumPy) are open-source and actively maintained.
 
@@ -356,7 +356,7 @@ The use case diagram illustrates the interactions between the clinician (primary
 | Operating System | Windows 10/11, macOS 10.15+, or Ubuntu 20.04+ |
 | Programming Language | Python 3.9 or higher |
 | Deep Learning Framework | TensorFlow 2.15.0 or higher |
-| Web Framework | Streamlit 1.30.0 or higher |
+| Web Framework | Flask 3.0.0 or higher |
 | Image Processing | OpenCV (opencv-python-headless) 4.8.0 or higher |
 | Numerical Computing | NumPy 1.24.0 or higher |
 | Image Format Handling | Pillow 10.0.0 or higher |
@@ -414,17 +414,18 @@ The class diagram describes the static structure of the RetinaRisk system, showi
   - `generate_gradcam(model, image_array, clinical_data, target_class_index)` → `np.ndarray`
   - `overlay_heatmap(heatmap, original_image, alpha, colormap)` → `np.ndarray`
 
-**Module: app (Main Application)**
+**Module: server & static (Main Application)**
 - Depends on: `model_loader`, `predictor`, `gradcam`
-- UI Components:
-  - `display_risk_label(label, emoji, ui_color)` → Renders styled risk label
-  - Sidebar: Clinical data input sliders and dropdown
-  - Main area: Image upload, result display, Grad-CAM visualization
+- UI Components (HTML/JS):
+  - Multi-page views (Upload, Loading, Results, Modal)
+  - Interactive upload forms and clinical sliders
+  - Asynchronous background polling via `fetch()` API
+- Backend API (Flask): `/api/analyze`
 
 **Relationships:**
-- `app` uses `model_loader.load_model()` to obtain the model
-- `app` uses `predictor.preprocess_image()`, `predictor.predict()`, `predictor.interpret_risk()`
-- `app` uses `gradcam.generate_gradcam()`, `gradcam.overlay_heatmap()`
+- `server` uses `model_loader.load_model()` to obtain the model
+- `server` uses `predictor.preprocess_image()`, `predictor.predict()`, `predictor.interpret_risk()`
+- `server` uses `gradcam.generate_gradcam()`, `gradcam.overlay_heatmap()`
 - `predictor.predict()` requires the model from `model_loader`
 - `gradcam.generate_gradcam()` requires the model from `model_loader`
 
@@ -433,10 +434,10 @@ The class diagram describes the static structure of the RetinaRisk system, showi
 The sequence diagram illustrates the temporal flow of interactions when a user uploads a retinal image and receives a prediction.
 
 ```
-User          →  App (Streamlit)     →  model_loader      →  predictor           →  gradcam
- |                    |                      |                    |                     |
- |  Open Application  |                      |                    |                     |
- |───────────────────>|                      |                    |                     |
+User          →  Frontend (JS)       →  Backend (Flask)     →  predictor / gradcam
+ |                    |                      |                    |
+ |  Open Application  |                      |                    |
+ |───────────────────>|                      |                    |
  |                    |  load_model()        |                    |                     |
  |                    |─────────────────────>|                    |                     |
  |                    |  return model        |                    |                     |
@@ -489,7 +490,7 @@ The activity diagram describes the workflow of the RetinaRisk system from start 
 [Start]
    │
    ▼
-[Launch Streamlit Application]
+[Launch Flask Backend Server]
    │
    ▼
 [Load EfficientNetB3 Model] ──(Error)──> [Display Error & Stop]
@@ -557,19 +558,19 @@ The deployment diagram shows the physical deployment architecture of the RetinaR
 │                  Client Machine                      │
 │  ┌───────────────────────────────────────────────┐   │
 │  │  Web Browser (Chrome / Firefox / Edge)         │   │
-│  │  - Accesses http://localhost:8501              │   │
-│  │  - Renders Streamlit UI                       │   │
-│  │  - Handles image upload and result display    │   │
+│  │  - Accesses http://127.0.0.1:5000              │   │
+│  │  - Renders HTML/CSS/JS UI                     │   │
+│  │  - Handles image upload and API fetch calls   │   │
 │  └───────────────────────────────────────────────┘   │
 └─────────────────────┬───────────────────────────────┘
-                      │ HTTP (Port 8501)
+                      │ HTTP (Port 5000)
                       ▼
 ┌─────────────────────────────────────────────────────┐
 │               Server / Local Machine                 │
 │  ┌───────────────────────────────────────────────┐   │
-│  │  Streamlit Server (Python Runtime)             │   │
+│  │  Flask Server (Python Runtime)                 │   │
 │  │  ┌─────────────────────────────────────────┐   │   │
-│  │  │  app.py (Web Application)                │   │   │
+│  │  │  server.py (API Backend)                 │   │   │
 │  │  │  ├── model_loader.py (Model Loading)     │   │   │
 │  │  │  ├── predictor.py (Prediction Logic)     │   │   │
 │  │  │  └── gradcam.py (Explainability)         │   │   │
@@ -585,14 +586,14 @@ The deployment diagram shows the physical deployment architecture of the RetinaR
 └─────────────────────────────────────────────────────┘
 ```
 
-The system follows a client-server architecture where the Streamlit server runs on the local machine (or a remote server) and the client accesses it through a web browser. All computation, including model inference and Grad-CAM generation, happens server-side.
+The system follows a client-server architecture where the Flask server runs on the local machine (or a remote server) and the client accesses it through a web browser. All computation, including model inference and Grad-CAM generation, happens server-side, while UI rendering happens strictly client-side.
 
 ## 5.2 System Architecture
 
 The RetinaRisk system follows a modular, layered architecture with four primary components:
 
-**Layer 1 — Presentation Layer (app.py):**
-The Streamlit-based web interface handles all user interactions. It provides:
+**Layer 1 — Presentation Layer (static/index.html & script.js):**
+The HTML/JS-based web interface handles all user interactions. It provides:
 - A sidebar for clinical data input with interactive sliders and dropdowns
 - A file uploader for retinal fundus images (supporting batch upload)
 - Dynamic result rendering including risk scores, labels, progress bars, and Grad-CAM overlays
@@ -1081,7 +1082,7 @@ The trained model was evaluated on the validation set (732 images):
 - The confusion matrix was analyzed to identify false positives and false negatives.
 
 **UI/UX Testing:**
-The Streamlit web application was manually tested across browsers:
+The HTML/JS web application was manually tested across browsers:
 - Image upload functionality (single and batch) was verified on Chrome, Firefox, and Edge.
 - Sidebar clinical data controls were tested for correct range enforcement.
 - Error handling was tested with non-image files, corrupted files, and non-retinal images.
@@ -1340,7 +1341,7 @@ The RetinaRisk project successfully demonstrates the feasibility of using artifi
 
 4. **Multimodal Fusion:** The integration of visual features from retinal images with clinical parameters (blood pressure, cholesterol, BMI, diabetes status) through a concatenation-based fusion architecture improves prediction reliability beyond what single-modality approaches can achieve.
 
-5. **Accessible Deployment:** The Streamlit-based web application provides an intuitive, browser-accessible interface that requires no specialized software or machine learning expertise to operate, making it suitable for clinical settings.
+5. **Accessible Deployment:** The custom Flask and HTML/JS web application provides an intuitive, browser-accessible interface with interactive steps (Upload, Loading, Output) that requires no specialized software or machine learning expertise to operate, making it suitable for clinical settings.
 
 6. **Robust Validation:** The automated retinal image validation system (HSV color analysis + Hough Circle detection) ensures that only genuine retinal fundus photographs are processed, preventing false predictions on invalid inputs.
 
