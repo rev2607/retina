@@ -39,6 +39,7 @@ All dependencies are listed in `requirements.txt`:
 | Package | Version | Purpose |
 |---------|---------|---------|
 | `flask` | ≥ 3.0.0 | Lightweight Python web framework (backend API server) |
+| `streamlit` | ≥ 1.30.0 | Rapid web application framework (Legacy UI) |
 | `tensorflow` | ≥ 2.15.0 | Deep learning model & inference |
 | `opencv-python-headless` | ≥ 4.8.0 | Image processing & Grad-CAM overlay |
 | `numpy` | ≥ 1.24.0 | Numerical computations |
@@ -87,11 +88,19 @@ retina/
 
 ### Step 5: Launch the Application
 
+You can run this project using two different interfaces: the modern Web App (Flask) or the Streamlit platform.
+
+**Option A: Modern Web App (Recommended)**
 ```bash
 python server.py
 ```
-
 The app will be available in your browser at **`http://127.0.0.1:5000`**.
+
+**Option B: Streamlit Platform**
+```bash
+streamlit run app.py
+```
+The app will open automatically in your browser at **`http://localhost:8501`**.
 
 > **First launch** may take 30–60 seconds while the model loads into memory. The model is loaded once at server startup; subsequent analyses are near-instant.
 
@@ -135,7 +144,7 @@ retina/
 
 ## 🖥️ Usage
 
-1. Open the app by running `python server.py` and navigating to `http://127.0.0.1:5000`
+1. **Option A:** Open the app by running `python server.py` and navigating to `http://127.0.0.1:5000` (Or use `streamlit run app.py` for Option B).
 2. **Upload Page (Step 1):**
    - Adjust clinical parameters in the left panel (or leave defaults):
      - Systolic Blood Pressure (80–200 mmHg)

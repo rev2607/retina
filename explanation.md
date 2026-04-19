@@ -90,7 +90,7 @@ User uploads retinal image(s) + sets clinical data on Upload Page
 | `retina_heart_model.h5` | Pre-trained model weights (~96 MB) |
 | `retina_(1)_(1).ipynb` | Jupyter notebook used for model training and experimentation |
 | `kaggle (1).json` | Kaggle API credentials for dataset downloading |
-| `app.py` | Legacy Streamlit application (no longer primary entry point) |
+| `app.py` | Legacy Streamlit application (alternative entry point) |
 
 ---
 
@@ -250,6 +250,7 @@ The core Grad-CAM algorithm:
 |-----------|---------|---------|
 | **Python** | 3.9+ | Core programming language |
 | **Flask** | ≥3.0.0 | Lightweight web framework (backend API server) |
+| **Streamlit** | ≥1.30.0 | Rapid web application framework (Legacy UI) |
 | **HTML5/CSS3/JS** | — | Frontend user interface (single-page application) |
 | **TensorFlow/Keras** | ≥2.15.0 | Deep learning model and inference |
 | **OpenCV** | ≥4.8.0 (headless) | Image processing, Grad-CAM overlay |
@@ -312,11 +313,16 @@ pip install -r requirements.txt
 
 # 2. Ensure retina_heart_model.h5 is in the project root
 
-# 3. Launch the app
-python server.py
-```
+# 3. Launch the app (Choose one)
 
-The app opens at `http://127.0.0.1:5000`.
+# Option A: Flask Web App (Recommended)
+python server.py
+# Opens at http://127.0.0.1:5000
+
+# Option B: Streamlit App
+streamlit run app.py
+# Opens at http://localhost:8501
+```
 
 ---
 

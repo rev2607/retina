@@ -115,7 +115,10 @@ The following deliverables are produced as part of the RetinaRisk project:
 
 1. **Trained Deep Learning Model:** A multimodal EfficientNetB3-based model (`retina_heart_model.h5`, ~96 MB) trained to classify retinal fundus images into Normal and Diseased categories, with cardiovascular risk probability output.
 
-2. **Web Application:** A fully functional web application (Flask `server.py` and `static/index.html`) that provides:
+2. **Web Applications:** Fully functional web applications providing two interfaces:
+   - **Modern Web App (Flask/HTML/JS):** `server.py` and `static/index.html`
+   - **Legacy Platform (Streamlit):** `app.py`
+   Both provide:
    - Retinal fundus image upload (single and batch)
    - Clinical data input via interactive sidebar controls
    - Real-time risk prediction with percentage score
@@ -231,7 +234,7 @@ The RetinaRisk system addresses these challenges by providing a non-invasive, AI
 
 5. **Grad-CAM Visualization:** The system generates a Grad-CAM heatmap overlay on the retinal image, highlighting the specific regions (blood vessel abnormalities, hemorrhages, lesions) that contributed to the prediction.
 
-6. **Web-Based Interface:** The entire system is deployed as a web application (Flask backend with HTML/JS frontend) accessible from any modern web browser, requiring no specialized software installation.
+6. **Web-Based Interface:** The entire system is deployed via two user-facing interfaces (a modern Flask backend with HTML/JS, or a Streamlit app) accessible from any modern web browser, requiring no specialized software installation.
 
 ### 3.2.1 Advantages
 
@@ -356,7 +359,7 @@ The use case diagram illustrates the interactions between the clinician (primary
 | Operating System | Windows 10/11, macOS 10.15+, or Ubuntu 20.04+ |
 | Programming Language | Python 3.9 or higher |
 | Deep Learning Framework | TensorFlow 2.15.0 or higher |
-| Web Framework | Flask 3.0.0 or higher |
+| Web Framework | Flask 3.0.0+ / Streamlit 1.30.0+ |
 | Image Processing | OpenCV (opencv-python-headless) 4.8.0 or higher |
 | Numerical Computing | NumPy 1.24.0 or higher |
 | Image Format Handling | Pillow 10.0.0 or higher |
